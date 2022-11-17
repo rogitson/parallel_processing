@@ -5,6 +5,7 @@
 #include <time.h>
 
 char *FileToString(const char *filename);
+int *Count(char * buffer);
 int *parCountTask(char *buffer);
 void *countCharTask(void *p);
 int *parCountData(char *buffer);
@@ -18,7 +19,7 @@ struct s
 };
 
 // Maximum number of characters to count through.
-int maxlen = 10000;
+int maxlen = 10000000;
 int threads = 16;
 long length;
 pthread_mutex_t lock;
@@ -30,21 +31,37 @@ int main()
     long double time;
 
     int *ans;
-    char *buffer = FileToString("lorem.txt");
+    char *buffer;
 
-    start = clock();
-    ans = parCountTask(buffer);
-    end = clock();
-    time = (long double)(end - start) / CLOCKS_PER_SEC;
+    char* files[] = {"lorem.txt", "lorem_20k.txt", "lorem_100k.txt", "lorem_1m.txt"};
 
-    printf("Time taken to count occurrences while parallelizing the task is %Lf\n", time);
+    for(int i = 0; i < 4; ++i)
+    {
+        buffer = FileToString(files[i]);
 
-    start = clock();
-    ans = parCountData(buffer);
-    end = clock();
-    time = (long double)(end - start) / CLOCKS_PER_SEC;
+        printf("In %s:\n", files[i]);
 
-    printf("Time taken to count occurrences while parallelizing the data is %Lf\n", time);
+        start = clock();
+        ans = Count(buffer);
+        end = clock();
+        time = (long double)(end - start) / CLOCKS_PER_SEC;
+
+        printf("Time taken to count occurrences sequentially %Lf\n", time);
+
+        start = clock();
+        ans = parCountTask(buffer);
+        end = clock();
+        time = (long double)(end - start) / CLOCKS_PER_SEC;
+
+        printf("Time taken to count occurrences while parallelizing the task is %Lf\n", time);
+
+        start = clock();
+        ans = parCountData(buffer);
+        end = clock();
+        time = (long double)(end - start) / CLOCKS_PER_SEC;
+
+        printf("Time taken to count occurrences while parallelizing the data is %Lf\n", time);
+    }
 
     // for (int i = 0; i < 128; ++i)
     //     printf("ASCII #%d: %c -> %d\n", i, i, *(ans + i));
@@ -74,6 +91,23 @@ char *FileToString(const char *filename)
         fclose(f);
     }
     return buffer;
+}
+
+int *Count(char * buffer)
+{
+    int *arr = malloc(sizeof(int) * 128);
+
+    if (buffer)
+    {
+        for (int i = 0; i < maxlen; ++i)
+        {
+            *(arr + *(buffer + i)) += 1;
+            if (*(buffer + i) == '\0')
+                break;
+        }
+    }
+
+    return arr;
 }
 
 int *parCountTask(char *buffer)
