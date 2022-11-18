@@ -19,7 +19,8 @@ struct mul
     int c;
 };
 
-int threads = 16;
+const int cores = 8,
+          threads = cores * 2;
 // Vector lengths.
 #define lcount 7
 int l[lcount] = {10, 100, 1000, 10000, 100000, 1000000, 10000000};
@@ -33,9 +34,12 @@ int main()
     long double time;
 
     // Vectors.
-    double *v1 = randVector(l[0], 1);
-    double *v2 = randVector(l[0], 2);
+    double *v1;
+    double *v2;
     double *v;
+
+    // v1 = randVector(l[0], 1);
+    // v2 = randVector(l[0], 2);
 
     // start = clock();
     // v = mulVector(v1, v2, l[0]);
@@ -61,6 +65,9 @@ int main()
     //     printf("%f * %f = %f\n", *(v1 + i), *(v2 + i), *(v + i));
     // }
 
+    // free(v1);
+    // free(v2);
+
     for (int i = 0; i < lcount; ++i)
     {
         // Initialize input vectors.
@@ -72,18 +79,20 @@ int main()
         end = clock();
         time = (long double)(end - start) / CLOCKS_PER_SEC;
         printf("Time taken to multiply vectors of size %d sequentially is %Lf\n", l[i], time);
+        free(v);
 
         start = clock();
         v = mulVectorPar(v1, v2, l[i]);
         end = clock();
         time = (long double)(end - start) / CLOCKS_PER_SEC;
-        printf("Time taken to multiply vectors of size %d parallelly is %Lf\n", l[i], time);
+        printf("Time taken to multiply vectors of size %d parallelly is %Lf\n", l[i], time / cores); // Divide time by number of physical cores
+        free(v);
+
+        // Cleanup.
+        free(v1);
+        free(v2);
     }
 
-    // Cleanup.
-    free(v1);
-    free(v2);
-    free(v);
     return 0;
 }
 

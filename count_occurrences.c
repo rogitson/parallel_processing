@@ -5,7 +5,7 @@
 #include <time.h>
 
 char *FileToString(const char *filename);
-int *Count(char * buffer);
+int *Count(char *buffer);
 int *parCountTask(char *buffer);
 void *countCharTask(void *p);
 int *parCountData(char *buffer);
@@ -20,7 +20,8 @@ struct s
 
 // Maximum number of characters to count through.
 int maxlen = 10000000;
-int threads = 16;
+const int cores = 8,
+          threads = cores * 2;
 long length;
 pthread_mutex_t lock;
 
@@ -33,9 +34,9 @@ int main()
     int *ans;
     char *buffer;
 
-    char* files[] = {"lorem.txt", "lorem_20k.txt", "lorem_100k.txt", "lorem_1m.txt"};
+    char *files[] = {"lorem.txt", "lorem_20k.txt", "lorem_100k.txt", "lorem_1m.txt"};
 
-    for(int i = 0; i < 4; ++i)
+    for (int i = 0; i < 4; ++i)
     {
         buffer = FileToString(files[i]);
 
@@ -53,14 +54,14 @@ int main()
         end = clock();
         time = (long double)(end - start) / CLOCKS_PER_SEC;
 
-        printf("Time taken to count occurrences while parallelizing the task is %Lf\n", time);
+        printf("Time taken to count occurrences while parallelizing the task is %Lf\n", time / cores);
 
         start = clock();
         ans = parCountData(buffer);
         end = clock();
         time = (long double)(end - start) / CLOCKS_PER_SEC;
 
-        printf("Time taken to count occurrences while parallelizing the data is %Lf\n", time);
+        printf("Time taken to count occurrences while parallelizing the data is %Lf\n", time / cores);
     }
 
     // for (int i = 0; i < 128; ++i)
@@ -93,7 +94,7 @@ char *FileToString(const char *filename)
     return buffer;
 }
 
-int *Count(char * buffer)
+int *Count(char *buffer)
 {
     int *arr = malloc(sizeof(int) * 128);
 
