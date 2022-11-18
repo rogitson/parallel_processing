@@ -6,3 +6,5 @@ The codes currently present are:
     Counts the number of occurrences of each ASCII character.
 * multiply_vectors.c  
     Performs simple elementwise multiplication on two vectors of varying sizes.
+* multiply_matrix.c  
+    Performs matrix multiplication (dot product) on two matrices of varying sizes.
