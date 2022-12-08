@@ -8,3 +8,7 @@ The codes currently present are:
     Performs simple elementwise multiplication on two vectors of varying sizes.
 * multiply_matrix.c  
     Performs matrix multiplication (dot product) on two matrices of varying sizes.
+* multiply_matrix_omp.c  
+    Performs matrix multiplication using OpenMP for parallelization.
+* add_vectors_avx.c  
+    Performs vector addition using AVX.
