@@ -19,10 +19,10 @@ int main()
     // loads arrays into avx vectors and add them
     for(int i = 0; i < size; i+=4)
     {
-        v1 = _mm256_load_pd(&d1[i]);
-        v2 = _mm256_load_pd(&d2[i]);
+        v1 = _mm256_load_pd(d1 + i);
+        v2 = _mm256_load_pd(d2 + i);
         v = _mm256_add_pd(v1, v2);
-        _mm256_store_pd(&d[i], v);
+        _mm256_store_pd(d + i, v);
     }
 
     // print results array

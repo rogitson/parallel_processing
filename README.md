@@ -12,3 +12,5 @@ The codes currently present are:
     Performs matrix multiplication using OpenMP for parallelization.
 * add_vectors_avx.c  
     Performs vector addition using AVX.
+* count_occurences_mpi.c
+    Counts the number of occurrences of some targeted characters using MPI and OpenMP.
